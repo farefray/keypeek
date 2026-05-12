@@ -236,6 +236,54 @@ impl OverlayApp {
                                 "Fit long labels to available space",
                             );
                             ui.end_row();
+
+                            ui.label("Show hold annotation");
+                            ui.checkbox(
+                                &mut self.settings.draft.show_hold_annotation,
+                                "Show modifier (Shift/Ctrl/Alt/Gui) on hold-tap keys",
+                            );
+                            ui.end_row();
+                        });
+                });
+
+                ui.add_space(10.0);
+
+                ui.group(|ui| {
+                    ui.heading("Visibility");
+                    ui.add_space(8.0);
+
+                    egui::Grid::new("visibility_grid")
+                        .num_columns(2)
+                        .striped(true)
+                        .spacing([20.0, 10.0])
+                        .show(ui, |ui| {
+                            ui.label("On non-base layer");
+                            ui.checkbox(
+                                &mut self.settings.draft.show_on_non_base_layer,
+                                "Stay visible while a non-default layer is active",
+                            );
+                            ui.end_row();
+
+                            ui.label("On key held");
+                            ui.checkbox(
+                                &mut self.settings.draft.show_on_key_held,
+                                "Show when any key is held past the threshold",
+                            );
+                            ui.end_row();
+
+                            ui.label("Hold threshold");
+                            ui.add_enabled_ui(self.settings.draft.show_on_key_held, |ui| {
+                                ui.add_sized(
+                                    ui.available_size(),
+                                    egui::DragValue::new(
+                                        &mut self.settings.draft.hold_threshold_ms,
+                                    )
+                                    .speed(5)
+                                    .range(20..=5_000)
+                                    .suffix(" ms"),
+                                );
+                            });
+                            ui.end_row();
                         });
                 });
 

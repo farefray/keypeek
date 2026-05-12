@@ -151,6 +151,11 @@ impl OverlayApp {
         let request = ConnectionRequest {
             spec,
             timeout: self.settings.draft.timeout,
+            visibility: crate::keyboard::VisibilityOptions {
+                show_on_non_base_layer: self.settings.draft.show_on_non_base_layer,
+                show_on_key_held: self.settings.draft.show_on_key_held,
+                hold_threshold_ms: self.settings.draft.hold_threshold_ms,
+            },
             layout_name: if self.session.draft_layout_name.is_empty() {
                 None
             } else {

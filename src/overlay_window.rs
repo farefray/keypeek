@@ -3,7 +3,7 @@ use crate::settings::Settings;
 use crate::ui_wake::UiWake;
 
 use eframe::egui;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 mod connection_flow;
 mod settings_sync;
@@ -83,6 +83,20 @@ impl OverlayApp {
         let AppConnectionState::Connected { keyboard } = &self.session.connection else {
             return;
         };
+
+        // Wake at the moment the held-key threshold flips overlay visibility
+        // on, so a key held silently to the threshold doesn't have to wait
+        // for an unrelated repaint to surface the overlay.
+        if self.settings.active.show_on_key_held {
+            if let Some(earliest_press) = keyboard.earliest_held_key_press_time() {
+                let threshold =
+                    Duration::from_millis(self.settings.active.hold_threshold_ms as u64);
+                let wake_at = earliest_press + threshold;
+                if let Some(delay) = wake_at.checked_duration_since(Instant::now()) {
+                    ctx.request_repaint_after(delay);
+                }
+            }
+        }
 
         let Some(time_to_hide) = keyboard
             .time_to_hide_overlay

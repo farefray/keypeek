@@ -198,24 +198,29 @@ fn keycode_label(keycode: &Keycode) -> Option<LayoutKey> {
             tap: Label::with_short("Space", "Spc"),
             ..Default::default()
         }),
+        // Stage 8 (Crosses 42 fork): flatten dual-glyph labels to single
+        // base char. Original QMK convention printed shifted glyph on top
+        // and base on bottom (e.g. "}\n]") to mimic a physical keycap.
+        // Crosses 42 uses these keycodes mostly on the SYM layer where the
+        // base char is the actual output — the shifted twin is misleading.
         Keycode::MINUS => Some(LayoutKey {
-            tap: Label::new("_\n-"),
+            tap: Label::new("-"),
             ..Default::default()
         }),
         Keycode::EQUAL => Some(LayoutKey {
-            tap: Label::new("+\n="),
+            tap: Label::new("="),
             ..Default::default()
         }),
         Keycode::LEFT_BRACKET => Some(LayoutKey {
-            tap: Label::new("{\n["),
+            tap: Label::new("["),
             ..Default::default()
         }),
         Keycode::RIGHT_BRACKET => Some(LayoutKey {
-            tap: Label::new("}\n]"),
+            tap: Label::new("]"),
             ..Default::default()
         }),
         Keycode::BACKSLASH => Some(LayoutKey {
-            tap: Label::new("|\n\\"),
+            tap: Label::new("\\"),
             ..Default::default()
         }),
         Keycode::NON_US_HASH => Some(LayoutKey {
@@ -223,27 +228,27 @@ fn keycode_label(keycode: &Keycode) -> Option<LayoutKey> {
             ..Default::default()
         }),
         Keycode::SEMICOLON => Some(LayoutKey {
-            tap: Label::new(":\n;"),
+            tap: Label::new(";"),
             ..Default::default()
         }),
         Keycode::SINGLE_QUOTE => Some(LayoutKey {
-            tap: Label::new("\"\n\'"),
+            tap: Label::new("'"),
             ..Default::default()
         }),
         Keycode::GRAVE => Some(LayoutKey {
-            tap: Label::new("~\n`"),
+            tap: Label::new("`"),
             ..Default::default()
         }),
         Keycode::COMMA => Some(LayoutKey {
-            tap: Label::new("<\n,"),
+            tap: Label::new(","),
             ..Default::default()
         }),
         Keycode::PERIOD => Some(LayoutKey {
-            tap: Label::new(">\n."),
+            tap: Label::new("."),
             ..Default::default()
         }),
         Keycode::SLASH => Some(LayoutKey {
-            tap: Label::new("?\n/"),
+            tap: Label::new("/"),
             ..Default::default()
         }),
         Keycode::CAPSLOCK => Some(LayoutKey {

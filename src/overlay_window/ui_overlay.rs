@@ -236,6 +236,29 @@ impl OverlayApp {
                     );
 
                     let font = egui::FontId::proportional(0.25 * size * font_scale);
+
+                    // Crosses 42 fork: paint the hold-side label (e.g.,
+                    // Shift/Ctrl/Alt/Gui for hml/hmr; "L1" for layer-tap)
+                    // as a small annotation in the keycap's top-left.
+                    if self.settings.active.show_hold_annotation {
+                        if let Some(hold) = &layout_key.hold {
+                            if !hold.is_empty() {
+                                let hold_text =
+                                    hold.short.as_deref().unwrap_or(hold.full.as_str());
+                                let hold_font =
+                                    egui::FontId::proportional(0.16 * size * font_scale);
+                                let hold_galley = ui.painter().layout_no_wrap(
+                                    hold_text.to_string(),
+                                    hold_font,
+                                    font_color,
+                                );
+                                let pad = 0.06 * size;
+                                let pos = egui::pos2(rect.left() + pad, rect.top() + pad);
+                                ui.painter().galley(pos, hold_galley, font_color);
+                            }
+                        }
+                    }
+
                     match self.generate_key_label_galleys(ui, &layout_key, rect, font, font_color) {
                         LabelGalleys {
                             symbol: Some(symbol_galley),

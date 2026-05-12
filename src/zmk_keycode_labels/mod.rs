@@ -1,4 +1,5 @@
 mod behavior;
+mod crosses42;
 mod hid_usage;
 mod keycode_label;
 

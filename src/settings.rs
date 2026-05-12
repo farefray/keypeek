@@ -172,6 +172,20 @@ pub struct Settings {
     pub timeout: i64,
     pub margin: u32,
     pub theme: ThemeSettings,
+    /// Crosses 42 fork: keep overlay visible whenever a non-default layer is
+    /// active. Off restores the timeout-only behavior.
+    pub show_on_non_base_layer: bool,
+    /// Crosses 42 fork: keep overlay visible while any key has been held
+    /// continuously for at least `hold_threshold_ms`. Approximates "modifier
+    /// engaged" for hml/hmr homerow mods (and plain held &kp LSHIFT/LCTRL)
+    /// without needing a firmware-side modifier-state event.
+    pub show_on_key_held: bool,
+    /// Hold threshold in ms used by `show_on_key_held`. Roughly the firmware
+    /// tap-term so quick taps don't pop the overlay.
+    pub hold_threshold_ms: u32,
+    /// Crosses 42 fork: render the hold-side label (e.g., Shift/Ctrl/Alt/Gui
+    /// for hml/hmr) as a small annotation in the keycap's top-left corner.
+    pub show_hold_annotation: bool,
 }
 
 impl Default for Settings {
@@ -184,6 +198,10 @@ impl Default for Settings {
             timeout: 2000,
             margin: 10,
             theme: ThemeSettings::default(),
+            show_on_non_base_layer: true,
+            show_on_key_held: true,
+            hold_threshold_ms: 200,
+            show_hold_annotation: true,
         }
     }
 }
@@ -243,6 +261,16 @@ impl Settings {
             section.set(format!("layer_color_{index}"), color.to_string());
         }
         section.set("font_color", self.theme.font_color.to_string());
+        section.set(
+            "show_on_non_base_layer",
+            self.show_on_non_base_layer.to_string(),
+        );
+        section.set("show_on_key_held", self.show_on_key_held.to_string());
+        section.set("hold_threshold_ms", self.hold_threshold_ms.to_string());
+        section.set(
+            "show_hold_annotation",
+            self.show_hold_annotation.to_string(),
+        );
         conf.write_to_file(path)
     }
 
@@ -287,6 +315,19 @@ impl Settings {
             if let Ok(parsed) = val.parse() {
                 s.theme.font_color = parsed;
             }
+        }
+        if let Some(val) = section.get("show_on_non_base_layer") {
+            s.show_on_non_base_layer = val.parse().unwrap_or(s.show_on_non_base_layer);
+        }
+        if let Some(val) = section.get("show_on_key_held") {
+            s.show_on_key_held = val.parse().unwrap_or(s.show_on_key_held);
+        }
+        if let Some(val) = section.get("hold_threshold_ms") {
+            let parsed = val.parse::<u32>().unwrap_or(s.hold_threshold_ms);
+            s.hold_threshold_ms = parsed.clamp(20, 5_000);
+        }
+        if let Some(val) = section.get("show_hold_annotation") {
+            s.show_hold_annotation = val.parse().unwrap_or(s.show_hold_annotation);
         }
         Some(s)
     }

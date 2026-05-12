@@ -1,6 +1,7 @@
 use crate::layout_key::{KeycodeKind, Label, LayoutKey};
 use zmk_studio_api::Behavior;
 
+use super::crosses42::crosses42_layout_key;
 use super::hid_usage::hid_usage_to_layout_key;
 
 pub fn behavior_to_layout_key(behavior: &Behavior) -> Option<LayoutKey> {
@@ -150,6 +151,12 @@ pub fn behavior_to_layout_key(behavior: &Behavior) -> Option<LayoutKey> {
             param1,
             param2,
         } => {
+            // Crosses 42 fork: try to resolve known custom behaviors before
+            // falling back to the raw hex display. See crosses42.rs.
+            if let Some(key) = crosses42_layout_key(*behavior_id, *param1, *param2) {
+                return Some(key);
+            }
+
             let label = if *param2 != 0 {
                 format!("0x{:X} {} {}", behavior_id, param1, param2)
             } else if *param1 != 0 {

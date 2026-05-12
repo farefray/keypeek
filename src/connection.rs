@@ -1,4 +1,4 @@
-use crate::keyboard::Keyboard;
+use crate::keyboard::{Keyboard, VisibilityOptions};
 use crate::protocols::{connect_protocol, ConnectionSpec, KeyboardDefinition, KeyboardProtocol};
 use crate::ui_wake::UiWake;
 use std::sync::mpsc::{self, TryRecvError};
@@ -8,6 +8,7 @@ const ZMK_LOCKED_ERROR: &str = "Device is locked. Please press the ZMK Studio un
 pub struct ConnectionRequest {
     pub spec: ConnectionSpec,
     pub timeout: i64,
+    pub visibility: VisibilityOptions,
     pub layout_name: Option<String>,
 }
 
@@ -89,6 +90,7 @@ pub fn build_connected_state(
         protocol,
         selected_layout_name.clone(),
         request.timeout,
+        request.visibility,
         ui_wake,
     )
     .map_err(|e| format!("Failed to create keyboard: {e}"))?;
